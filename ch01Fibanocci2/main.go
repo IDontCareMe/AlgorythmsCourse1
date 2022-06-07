@@ -23,7 +23,25 @@ func printError(err error) {
   fmt.Println(err)
 }
 
-//function fibanocci3 calculates n number of sequence by module m
+//function fibanocci3 calculates n number of sequence by module m F(n)%F(m)
 func fibanocci3(n,m int)int {
+  var module int
+  first, second := 0, 1
   
+  if n <=1 {
+    return n
+  }
+  for i:= 2; i <= n; i++ {
+    first, second = second, first + second
+    
+    if i == m {
+      module = second
+    }
+    
+    if second == module {
+      first, second = 0, 1
+      i += 2
+    }
+  }
+  return second
 }
