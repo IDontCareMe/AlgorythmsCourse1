@@ -10,10 +10,12 @@ func TestFibanocci3(t *testing.T) {
     n,m int
     want int
   } {
-    {0, 17, 0},
-    {20, 2, 1},
+    {9, 2, 0},
     {10, 2, 1},
-    {6, 10, 8},
+    {1025, 55, 5},
+    {12589, 369, 89},
+    {1598753, 25897, 20305},
+    {60282445765134413, 2263, 974 },
   }
   for _,test := range tests {
     name := fmt.Sprintf("case F(%d)%%F(%d):", test.n, test.m)
