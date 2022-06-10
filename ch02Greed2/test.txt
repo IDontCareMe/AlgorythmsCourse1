@@ -1,0 +1,9 @@
+3 50
+60 20
+100 50
+120 30
+
+This file contains test I used
+
+How to use:
+$go run main.go < test.txt
