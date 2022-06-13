@@ -36,7 +36,7 @@ func (t *TreeQueue) Create(m map[rune]int) {
   }
 }
 // This function extracts Node from queue and returns it's adreess
-func (t *TreeQueue) ExtractMin()*TreeNode {
+func (t *TreeQueue) ExtractMin()TreeNode {
   min := (*t)[0].frq
   num := 0
   for i,v := range *t {
@@ -46,7 +46,7 @@ func (t *TreeQueue) ExtractMin()*TreeNode {
     } 
   }
   // Store Node address
-  var p *TreeNode = &(*t)[num]
+  var p TreeNode = (*t)[num]
   // Exclude Node from Queue
   if num == len(*t) - 1 {
     *t = (*t)[:num]  
@@ -73,17 +73,17 @@ func main() {
   // Create Queue
   var tq TreeQueue = make([]TreeNode, 0)
   tq.Create(res)
-  fmt.Println(tq.String())
-  var p *TreeNode
+  
+  /*var p TreeNode
   for i:=0; i < 8; i++ {
     p = tq.ExtractMin()
     fmt.Println(p.String())
-  }
+  }*/
   // print result
   //printResult(res)
   //
-  //p:=createTree(tq)
-  //fmt.Println(p.String())
+  p:=createTree(tq)
+  fmt.Println(p)
 }
 
 // This function reads input and returns string of error
@@ -121,11 +121,11 @@ func createTree(tq TreeQueue)(node *TreeNode) {
     node = &TreeNode{
       zero.frq + one.frq,
       0,
-      zero,
-      one,
+      &zero,
+      &one,
     }
-    //tq.Insert(*node)
-    //fmt.Println("New node:",*node)
+    tq.Insert(*node)
+    fmt.Println("New node:",node)
     fmt.Println(tq.String(),"Queue lenght:",len(tq))
   }
   //return  
