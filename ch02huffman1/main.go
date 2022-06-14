@@ -1,3 +1,4 @@
+//https://golang-blog.blogspot.com/2020/08/package-heap-in-golang.html
 package main
 
 import(
@@ -6,18 +7,62 @@ import(
   "os"
   "errors"
   "bufio"
-  "sort"
+  //"sort"
   "strings"
+  "container/heap"
 )
 
-// Tree node struct node for binar tree contains frq & char
+// Tree node struct node for binar tree 
 type TreeNode struct {
-  frq int
   char rune
+  frq int
+  index int // index in Queue, uses in heap.Interface
+  code string
+  left, right *TreeNode
+}
+func (t *TreeNode)buildCode(s string, m *map[rune]string){
+  t.code = s
+  //if not leafs
+  if (t.left != nil) && (t.right != nil) {
+    t.left.buildCode(s + "0", m)
+    t.right.buildCode(s + "1", m)
+  } else {
+    //fmt.Printf("%c: %s\n", t.char, t.code)
+    (*m)[t.char] = t.code
+  }
 }
 func (t *TreeNode) String()string {
-  return fmt.Sprintf("Frq: %d, Char: %c", t.frq, t.char)
+  return fmt.Sprintf("%c: %s", t.char, t.code)
 }
+
+
+// Priority queue implements heap.Interface and contains TreeNode
+type PriorityQueue []*TreeNode
+// Implements sort.Interface
+func (pq PriorityQueue) Len()int { return len(pq) }
+func (pq PriorityQueue) Less(i, j int)bool { return pq[i].frq < pq[j].frq }//less priority first
+func (pq PriorityQueue) Swap(i, j int) {
+  pq[i], pq[j] = pq[j], pq[i]
+  pq[i].index = i
+  pq[j].index = j
+}
+// Implements heap.Interface
+func (pq *PriorityQueue) Push (x interface{}) {
+  n := len(*pq)
+  item := x.(*TreeNode)
+  item.index = n
+  *pq = append(*pq, item)
+}
+func (pq *PriorityQueue) Pop()interface {} {
+  old := *pq
+  n := len(old)
+  item := old[n - 1]
+  old[n - 1] = nil
+  item.index = -1
+  *pq = old[0:n-1]
+  return item
+}
+//func (pq *PriorityQueue) Update(item *TreeNode, )
 
 func main() {
   // Read input
@@ -26,13 +71,15 @@ func main() {
     printErrors(err)
   }
   // search all runes in string
-  res := searchRune(s)
+  dict := searchRune(s)
   // Create code table
-  table := codeTable(res)
+  table := codeTable(dict)
+  
   // Code string
   answer := code(s, table)
   // print result
   printResult(answer, table)
+
 }
 
 // This function reads input and returns string of error
@@ -57,7 +104,53 @@ func searchRune(s string)(result map[rune]int){
 }
 
 // This function returns sorted code table
-func codeTable(m map[rune]int)(table map[rune]string) {
+func codeTable(m map[rune]int)(t map[rune]string) {
+  // Create Priority Queue
+  pq := make(PriorityQueue, len(m))
+  i:=0
+  for char, frq := range m {
+    pq[i] = &TreeNode{
+      char: char,
+      frq: frq,
+      index: i,
+      //code: "",
+    }
+    i++
+  }
+  heap.Init(&pq)
+
+  // Create binary tree
+  for pq.Len() > 1 {
+    left := heap.Pop(&pq).(*TreeNode)
+    right := heap.Pop(&pq).(*TreeNode)
+    node := &TreeNode{
+      frq: left.frq + right.frq,
+      left: left,
+      right: right,
+    }
+    heap.Push(&pq, node)
+    //fmt.Println(pq)
+  }
+  root := heap.Pop(&pq).(*TreeNode)
+  t = make(map[rune]string)
+  root.buildCode("", &t)
+  //fmt.Println(root.frq)
+
+  //Create code table
+  
+/*
+  item := &TreeNode{
+    char: rune('X'),
+      frq: 10,
+      code: "",
+  }
+  heap.Push(&pq, item)
+
+  for pq.Len() > 0 {
+    item := heap.Pop(&pq).(*TreeNode)
+    fmt.Printf("%c: %d\n", item.char, item.frq)
+  }*/
+  /*
   // Create table as slice
   var t []TreeNode = make([]TreeNode, 0)
   for key, value := range m {
@@ -80,6 +173,7 @@ func codeTable(m map[rune]int)(table map[rune]string) {
     }
     table[val.char] = c
   }
+*/
   return
 }
 
