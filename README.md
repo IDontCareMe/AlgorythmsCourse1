@@ -1,3 +1,5 @@
+[![foo](https://img.shields.io/badge/Go%20-v1.14-blue)]
+
 # Algorithms Course 1
 Learning course from https://stepik.org/course/217 
 #### Learning Go.
