@@ -7,7 +7,6 @@ import(
   "os"
   "errors"
   "bufio"
-  //"sort"
   "strings"
   "container/heap"
 )
@@ -31,10 +30,6 @@ func (t *TreeNode)buildCode(s string, m *map[rune]string){
     (*m)[t.char] = t.code
   }
 }
-func (t *TreeNode) String()string {
-  return fmt.Sprintf("%c: %s", t.char, t.code)
-}
-
 
 // Priority queue implements heap.Interface and contains TreeNode
 type PriorityQueue []*TreeNode
@@ -62,7 +57,6 @@ func (pq *PriorityQueue) Pop()interface {} {
   *pq = old[0:n-1]
   return item
 }
-//func (pq *PriorityQueue) Update(item *TreeNode, )
 
 func main() {
   // Read input
@@ -74,12 +68,10 @@ func main() {
   dict := searchRune(s)
   // Create code table
   table := codeTable(dict)
-  
   // Code string
   answer := code(s, table)
   // print result
   printResult(answer, table)
-
 }
 
 // This function reads input and returns string of error
@@ -87,7 +79,7 @@ func readInputString()(s string, err error) {
   reader := bufio.NewReader(os.Stdin)
   s, err = reader.ReadString('\n')
     if err == io.EOF { err = nil }
-  if len(s) <= 0 {
+  if len(s) <= 1 {// exept '\n'
     err = errors.New("String must contains at least one char")
   }
   s = strings.TrimSpace(s)
@@ -113,7 +105,6 @@ func codeTable(m map[rune]int)(t map[rune]string) {
       char: char,
       frq: frq,
       index: i,
-      //code: "",
     }
     i++
   }
@@ -129,51 +120,15 @@ func codeTable(m map[rune]int)(t map[rune]string) {
       right: right,
     }
     heap.Push(&pq, node)
-    //fmt.Println(pq)
   }
   root := heap.Pop(&pq).(*TreeNode)
   t = make(map[rune]string)
-  root.buildCode("", &t)
-  //fmt.Println(root.frq)
-
-  //Create code table
+  if len(m) <=1 {
+    root.buildCode("0", &t)
+  } else {
+    root.buildCode("", &t)
+  }
   
-/*
-  item := &TreeNode{
-    char: rune('X'),
-      frq: 10,
-      code: "",
-  }
-  heap.Push(&pq, item)
-
-  for pq.Len() > 0 {
-    item := heap.Pop(&pq).(*TreeNode)
-    fmt.Printf("%c: %d\n", item.char, item.frq)
-  }*/
-  /*
-  // Create table as slice
-  var t []TreeNode = make([]TreeNode, 0)
-  for key, value := range m {
-    t = append(t, TreeNode {value, key})
-  }
-  // Sort table slice
-  sort.Slice(t,func(i,j int)bool{
-    return t[i].frq > t[j].frq
-  })
-  // Code table
-  table = make(map[rune]string)
-  if len(t) <= 1 {
-    table[t[0].char] = "0"
-    return
-  }
-  for i,val := range t {
-    c := strings.Repeat("1",i)
-    if i != len(t)-1 {
-      c += "0"
-    }
-    table[val.char] = c
-  }
-*/
   return
 }
 
