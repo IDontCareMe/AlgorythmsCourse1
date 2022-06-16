@@ -23,42 +23,46 @@ func printError(err error) {
   fmt.Println(err)
 }
 
-//function fibanocci3 calculates n number of sequence by module m F(n)%F(m)
+//function fibanocci3 calculates n number of sequence by module m F(n)%m
 func fibanocci3(n,m int)int {
 
   if n <=1 {
-    return int(n)
+    return n%m
   }
 
   var period int = -1
+  arr := make([]int, m*6+2)
   var first, second int = 0, 1
+  arr[0] = first
+  arr[1] = second
   for i:= 2; i <= n; i++ {
-    first, second = second%m, first + second
-    //if (first%m == 0) && (second%m == 1) {
+    first, second = second, (first + second)%m
+    arr[i] = second
+    //fmt.Println(arr[i])
     if (first == 0) && (second == 1) {
       period = i-1
+      //fmt.Println("Period:", period)
       n = n%period
-      fmt.Println("Period:", period)
-      fmt.Println("New n:", n)
       break
     }
   }
   if period == -1 {
     return second
   }
-  
-  /*if second == m {
-    return 0
-  } else if second < m {
-    return second
-  }*/
-  
+
+  /*
   if n <=1 {
-    return n
+    return n%m
   }
   first, second = 0, 1
   for i:= 2; i <= n; i++ {
-    first, second = second, first + second
+    first, second = second, (first + second)%m
   }
-  return second
+  //return second
+  */
+  /*for _,val := range arr {
+    fmt.Println(val)
+  }*/
+  //fmt.Println("arr =", arr[n])
+  return arr[n]
 }
