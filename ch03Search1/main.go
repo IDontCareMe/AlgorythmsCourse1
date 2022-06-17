@@ -19,7 +19,7 @@ func main() {
   // Search numbers in sorted
   for _,value := range numbers {
     answer := search(value, sorted)
-    if answer != -1 { answer++ }
+    if answer != -1 { answer++ }// for tests start index is 1
     fmt.Printf("%d ", answer)
   }
 }
@@ -43,11 +43,7 @@ func readInputInt()(slice []int, err error) {
 
 func search(n int, slice []int)(index int) {
   index = -1
-  l := 0
-  r := len(slice) - 1
-  for {
-    //fmt.Println(n,":",l,r)
-    if l > r { break }
+  for l, r := 0, len(slice) - 1; l <= r; {
     m := l + (r-l)/2
     if slice[m] == n {
       index = m
