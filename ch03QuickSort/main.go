@@ -17,8 +17,7 @@ type line struct {
 
 type lines []line
 func (theLines lines) Swap(i,j int) { theLines[i], theLines[j] = theLines[j], theLines[i] }
-func (theLines lines) LessR(i,j int)bool { return theLines[i].r > theLines[j].r }
-func (theLines lines) LessL(i,j int)bool { return theLines[i].l < theLines[j].l }
+func (theLines lines) Less(i,j int)bool { return theLines[i].r > theLines[j].r }
 func (theLines lines) Len()int { return len(theLines) }
 
 func main() {
@@ -26,8 +25,7 @@ func main() {
   if err != nil {
     printError(err)
   }
-  //fmt.Println(l)
-  //l = quickSort(l, 0, l.Len()-1, true)
+  l = quickSort(l, 0, l.Len()-1)
   
   for _, val := range p {
     fmt.Printf("%d ", checkContain(val, l))
@@ -90,30 +88,23 @@ func readInput()(lines lines, points []int, err error) {
 }
 
 // This function sorts slice
-func quickSort(theLines lines, l, r int, left bool)lines {
+func quickSort(theLines lines, l, r int)lines {
   if l >= r {
     return theLines
   }
-  m := partition(theLines, l, r, left)
-  quickSort(theLines, l, m-1, left)
-  quickSort(theLines, m + 1, r, left)
+  m := partition(theLines, l, r)
+  quickSort(theLines, l, m-1)
+  quickSort(theLines, m + 1, r)
   return theLines
 }
 
 //This function parts slice for quick sort func
-func partition(theLines lines, l, r int, left bool)int {
+func partition(theLines lines, l, r int)int {
   j := l
   for i:= l + 1; i <= r ; i++ {
-    if left {
-      if theLines.LessL(i, l) {
-        j++
-        theLines.Swap(i,j)
-      }
-    } else {
-      if theLines.LessR(i, l) {
-        j++
-        theLines.Swap(i,j)
-      }
+    if theLines.Less(i, l) {
+      j++
+      theLines.Swap(i,j)
     }
   }
   theLines.Swap(l,j)
@@ -122,25 +113,13 @@ func partition(theLines lines, l, r int, left bool)int {
 
 // This function checks if ilne contains point
 func checkContain(n int, theLines lines)(contains int) {
-  fmt.Println("\n n:", n)
-  theLines = quickSort(theLines, 0, theLines.Len()-1, false)
-  fmt.Println("slice right:", theLines)
-  r := 0
-  for i,v := range theLines {
-    if n > v.r {
-      r = i
-      fmt.Println("r: ", r)
-      break
-    }
-    r = i
-    fmt.Println("r: ", r)
-  }
-  theLines = quickSort(theLines, 0, r, true)
-  fmt.Println("slice left:", theLines)
-  for i,v := range theLines {
-    if n < v.l {
-      contains = i
-      break
+  for _,v := range theLines {
+    if n <= v.r {
+      if n >= v.l {
+        contains++
+      }
+    } else {
+        break
     }
   }
   return
