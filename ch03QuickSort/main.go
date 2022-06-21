@@ -225,12 +225,23 @@ func readInputNew()(lines lines, points []int, err error) {
 
 // This function sorts slice
 func quickSort3(theLines lines, l, r int, Comparator comparator3)lines {
-  if l >= r {
+  /*if l >= r {
     return theLines
   }
   m,z := partition3(theLines, l, r, Comparator)
   quickSort3(theLines, l, m-1, Comparator)
   quickSort3(theLines, z + 1, r, Comparator)
+  return theLines*/
+  for l < r {
+    m, z := partition3(theLines, l, r, Comparator)
+    if (l+m-1) < (r - z + 1) {
+      quickSort3(theLines, l, m-1, Comparator)
+      l = z + 1
+    } else {
+      quickSort3(theLines, z + 1, r, Comparator)
+      r = m - 1
+    }
+  }
   return theLines
 }
 
