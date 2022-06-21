@@ -11,6 +11,12 @@ import (
 
 const debug bool = true
 
+const (
+  eq = iota
+  gt 
+  le 
+)
+
 type line struct {
  l,r int 
 }
@@ -21,6 +27,7 @@ func (theLines lines) Swap(i,j int) { theLines[i], theLines[j] = theLines[j], th
 func (theLines lines) Len()int { return len(theLines) }
 
 type comparator func(int, int)bool
+type comparator3 func(int, int)int
 
 func main() {
   // Read input
@@ -36,6 +43,7 @@ func main() {
     fmt.Println("unsorted l:", l)
     fmt.Println("unsorted r:", r)
   }
+  /*
   // Sort by left end
   l = quickSort(l, 0, l.Len()-1, func(i, j int)bool{
     return l[i].l < l[j].l
@@ -43,6 +51,27 @@ func main() {
   // Sort by right end
   r = quickSort(r, 0, r.Len()-1, func(i, j int)bool {
     return r[i].r < r[j].r
+  })
+*/
+  // Sort by left end
+  l = quickSort3(l, 0, l.Len()-1, func(i, j int)int {
+    comp := eq
+    if l[i].l < l[j].l {
+        comp = le
+    } else if l[i].l > l[j].l {
+        comp = gt
+    }
+    return comp
+  })
+  // Sort by right end
+  r = quickSort3(r, 0, r.Len()-1, func(i, j int)int {
+    comp := eq
+    if r[i].r < r[j].r {
+        comp = le
+    } else if r[i].r > r[j].r {
+        comp = gt
+    }
+    return comp
   })
   if debug {
     fmt.Println("sorted l:", l)
@@ -191,5 +220,31 @@ func readInputNew()(lines lines, points []int, err error) {
     points[i] = p
   }
   err = nil
+  return
+}
+
+// This function sorts slice
+func quickSort3(theLines lines, l, r int, Comparator comparator3)lines {
+  if l >= r {
+    return theLines
+  }
+  m,z := partition3(theLines, l, r, Comparator)
+  quickSort3(theLines, l, m-1, Comparator)
+  quickSort3(theLines, z + 1, r, Comparator)
+  return theLines
+}
+
+//This function parts slice for quick sort func
+func partition3(theLines lines, l, r int, Comparator comparator3)(j, z int) {
+    //theLines.Swap(l, rand.Intn(theLines.Len() - 1))
+  j = l
+  z = l
+  for i := l + 1; i <= r ; i++ {
+    switch Comparator(i,l) {
+        case eq: z++; theLines.Swap(i,z);
+        case le: z++; theLines.Swap(i,z); j++; theLines.Swap(z,j)
+    }
+  }
+  theLines.Swap(l,j)
   return
 }
