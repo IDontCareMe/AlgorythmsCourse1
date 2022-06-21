@@ -137,11 +137,8 @@ func partition(theLines lines, l, r int, Comparator comparator)int {
 
 // This function checks if ilne contains point
 func checkContain(n int, left, right lines)(contains int) {
-  //l, m := 0, 0
-  //r := left.Len() - 1
   M:=0
   for m, l, r := 0, 0, left.Len()-1; l <= r; {
-    //if l > r { break }
     m = l + (r-l)/2
     if n >= left[m].l {
       l = m + 1
@@ -152,13 +149,14 @@ func checkContain(n int, left, right lines)(contains int) {
   }
   if debug { fmt.Println("Cont. left:", M) }
   
+  /*
   for _,v := range left[:M] {
     if n <= v.r {
       contains++
     }
   } 
-
-  /*
+  */
+  
   // For right
   N:=0
   for m, l, r := 0, 0, right.Len()-1; l <= r; {
@@ -168,10 +166,12 @@ func checkContain(n int, left, right lines)(contains int) {
     } else {
       l = m + 1
     }
-    N = r
+    N = r + 1
   }
   if debug { fmt.Println("Cont. right:", N) }
-  */
+
+  contains = M - N
+  
   /*
   for _,v := range theLines {
     if n >= v.l {
