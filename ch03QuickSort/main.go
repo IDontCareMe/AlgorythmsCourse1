@@ -24,7 +24,8 @@ type comparator func(int, int)bool
 
 func main() {
   // Read input
-  l, p, err := readInput()
+  //l, p, err := readInput()
+  l, p, err := readInputNew()
   if err != nil {
     printError(err)
   }
@@ -148,16 +149,7 @@ func checkContain(n int, left, right lines)(contains int) {
     M = l
   }
   if debug { fmt.Println("Cont. left:", M) }
-  
-  /*
-  for _,v := range left[:M] {
-    if n <= v.r {
-      contains++
-    }
-  } 
-  */
-  
-  // For right
+ 
   N:=0
   for m, l, r := 0, 0, right.Len()-1; l <= r; {
     m = l + (r-l)/2
@@ -170,21 +162,7 @@ func checkContain(n int, left, right lines)(contains int) {
   }
   if debug { fmt.Println("Cont. right:", N) }
 
-  contains = M - N
-  
-  /*
-  for _,v := range theLines {
-    if n >= v.l {
-      if n >= v.r {
-        contains++
-      }
-    } else {
-        break
-    }
-  }
-  return
-*/
-  return
+  return M - N
 }
 
 // This function handles errors
@@ -193,4 +171,25 @@ func printError(err error) {
     fmt.Println(err)
     os.Exit(1)
   }
+}
+
+// Test
+func readInputNew()(lines lines, points []int, err error) {
+  var n, m int
+  fmt.Scan(&n, &m)
+  lines = make([]line, n)
+  for i,_ := range lines {
+    var l, r int
+    fmt.Scan(&l, &r)
+    lines[i].l = l
+    lines[i].r = r
+  }
+  points = make([]int, m)
+  for i,_ := range points {
+    var p int
+    fmt.Scan(&p)
+    points[i] = p
+  }
+  err = nil
+  return
 }
