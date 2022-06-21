@@ -9,7 +9,7 @@ import (
   "strconv"
 )
 
-const debug bool = false
+const debug bool = true
 
 type line struct {
  l,r int 
@@ -17,19 +17,42 @@ type line struct {
 
 type lines []line
 func (theLines lines) Swap(i,j int) { theLines[i], theLines[j] = theLines[j], theLines[i] }
-func (theLines lines) Less(i,j int)bool { return theLines[i].r > theLines[j].r }
+//func (theLines lines) Less(i,j int)bool { return theLines[i].l < theLines[j].l }
 func (theLines lines) Len()int { return len(theLines) }
 
+type comparator func(int, int)bool
+
 func main() {
+  // Read input
   l, p, err := readInput()
   if err != nil {
     printError(err)
   }
-  l = quickSort(l, 0, l.Len()-1)
-  
-  for _, val := range p {
-    fmt.Printf("%d ", checkContain(val, l))
+  // Duplicate l-Slice to sort by right end
+  r := make(lines, len(l))
+  copy(r, l)
+  if debug {
+    fmt.Println("unsorted l:", l)
+    fmt.Println("unsorted r:", r)
   }
+  // Sort by left end
+  l = quickSort(l, 0, l.Len()-1, func(i, j int)bool{
+    return l[i].l < l[j].l
+  })
+  // Sort by right end
+  r = quickSort(r, 0, r.Len()-1, func(i, j int)bool {
+    return r[i].r < r[j].r
+  })
+  if debug {
+    fmt.Println("sorted l:", l)
+    fmt.Println("sorted r:", r)
+  }
+  
+  answer := ""
+  for _, val := range p {
+    answer += fmt.Sprintf("%d ", checkContain(val, l, r))
+  }
+  fmt.Println(answer)
 }
 
 // This function reads input
@@ -48,13 +71,13 @@ func readInput()(lines lines, points []int, err error) {
   if err != nil {
     return
   }
-  if debug { fmt.Println(n) }
+  if debug { fmt.Println("Number of lines:", n) }
   // Extract number of points
   m, err := strconv.Atoi(str[1])
   if err != nil {
     return
   }
-  if debug { fmt.Println(m) }
+  if debug { fmt.Println("Number of points:", m) }
   // Read lines & fill slice
   lines = make([]line, n)
   for i, _ := range lines {
@@ -88,21 +111,22 @@ func readInput()(lines lines, points []int, err error) {
 }
 
 // This function sorts slice
-func quickSort(theLines lines, l, r int)lines {
+func quickSort(theLines lines, l, r int, Comparator comparator)lines {
   if l >= r {
     return theLines
   }
-  m := partition(theLines, l, r)
-  quickSort(theLines, l, m-1)
-  quickSort(theLines, m + 1, r)
+  m := partition(theLines, l, r, Comparator)
+  quickSort(theLines, l, m-1, Comparator)
+  quickSort(theLines, m + 1, r, Comparator)
   return theLines
 }
 
 //This function parts slice for quick sort func
-func partition(theLines lines, l, r int)int {
+func partition(theLines lines, l, r int, Comparator comparator)int {
   j := l
   for i:= l + 1; i <= r ; i++ {
-    if theLines.Less(i, l) {
+    //if theLines.Less(i, l) {
+    if Comparator(i, l) {
       j++
       theLines.Swap(i,j)
     }
@@ -112,16 +136,54 @@ func partition(theLines lines, l, r int)int {
 }
 
 // This function checks if ilne contains point
-func checkContain(n int, theLines lines)(contains int) {
-  for _,v := range theLines {
+func checkContain(n int, left, right lines)(contains int) {
+  //l, m := 0, 0
+  //r := left.Len() - 1
+  M:=0
+  for m, l, r := 0, 0, left.Len()-1; l <= r; {
+    //if l > r { break }
+    m = l + (r-l)/2
+    if n >= left[m].l {
+      l = m + 1
+    } else {
+      r = m - 1
+    }
+    M = l
+  }
+  if debug { fmt.Println("Cont. left:", M) }
+  
+  for _,v := range left[:M] {
     if n <= v.r {
-      if n >= v.l {
+      contains++
+    }
+  } 
+
+  /*
+  // For right
+  N:=0
+  for m, l, r := 0, 0, right.Len()-1; l <= r; {
+    m = l + (r-l)/2
+    if n <= right[m].r {
+      r = m - 1
+    } else {
+      l = m + 1
+    }
+    N = r
+  }
+  if debug { fmt.Println("Cont. right:", N) }
+  */
+  /*
+  for _,v := range theLines {
+    if n >= v.l {
+      if n >= v.r {
         contains++
       }
     } else {
         break
     }
   }
+  return
+*/
   return
 }
 
