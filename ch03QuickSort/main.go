@@ -7,6 +7,7 @@ import (
   "bufio"
   "strings"
   "strconv"
+  "sort"
 )
 
 const debug bool = true
@@ -52,7 +53,8 @@ func main() {
   r = quickSort(r, 0, r.Len()-1, func(i, j int)bool {
     return r[i].r < r[j].r
   })
-*/
+  */
+  /*
   // Sort by left end
   l = quickSort3(l, 0, l.Len()-1, func(i, j int)int {
     comp := eq
@@ -72,6 +74,13 @@ func main() {
         comp = gt
     }
     return comp
+  })
+  */
+  sort.Slice(l, func(i,j int)bool {
+    return l[i].l < l[j].l
+  })
+  sort.Slice(r, func(i,j int)bool {
+    return r[i].r < r[j].r
   })
   if debug {
     fmt.Println("sorted l:", l)
@@ -232,6 +241,7 @@ func quickSort3(theLines lines, l, r int, Comparator comparator3)lines {
   quickSort3(theLines, l, m-1, Comparator)
   quickSort3(theLines, z + 1, r, Comparator)
   return theLines*/
+  //Tail recursion elemination
   for l < r {
     m, z := partition3(theLines, l, r, Comparator)
     if (l+m-1) < (r - z + 1) {
