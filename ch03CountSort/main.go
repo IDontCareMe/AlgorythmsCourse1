@@ -10,7 +10,11 @@ import (
 )
 
 func main() {
-  
+  arr, err := readInputInt()
+  if err != nil {
+    printError(err)
+  }
+  fmt.Println(arr)
 }
 
 // This function reads input
@@ -20,12 +24,26 @@ func readInputInt()([]int, error) {
   if (err != nil) && (err != io.EOF) {
     return []int{}, err
   }
-  s = strings.TrimSpaces(s)
+  s = strings.TrimSpace(s)
   n, err := strconv.Atoi(s)
   if err != nil {
     return []int{}, err
   }
-  
+  // Read array
+  s, err = reader.ReadString('\n')
+  if (err != nil) && (err != io.EOF) {
+    return []int{}, err
+  }
+  s = strings.TrimSpace(s)
+  str := strings.Fields(s)
+  numbers := make([]int,n)
+  for i, _ := range numbers {
+    numbers[i], err = strconv.Atoi(str[i])
+    if err != nil {
+      return []int{}, err
+    }
+  }
+  return numbers, err
 }
 
 // This function handles errors
