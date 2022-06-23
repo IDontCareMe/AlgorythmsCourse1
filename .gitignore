@@ -9,5 +9,8 @@
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
-# Repl.it IDE config files
+# Replit.com IDE config files
 *.replit
+
+# Scripts & utils
+*.sh
