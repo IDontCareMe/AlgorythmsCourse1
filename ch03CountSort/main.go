@@ -9,12 +9,15 @@ import (
   "strconv"
 )
 
+const debug bool = true
+
 func main() {
   arr, err := readInputInt()
   if err != nil {
     printError(err)
   }
-  fmt.Println(arr)
+  answer := countSort(arr)
+  printResult(answer)
 }
 
 // This function reads input
@@ -43,7 +46,34 @@ func readInputInt()([]int, error) {
       return []int{}, err
     }
   }
+  if debug { fmt.Println("Inpun:", numbers) }
   return numbers, err
+}
+
+// This function sorts Slice by count Sort
+func countSort(numbers []int)(sorted []int) {
+  var counts [11]int
+  for _, value := range numbers {
+    counts[value]++
+  }
+  if debug { fmt.Println("Counts:", counts) }
+  for i := 1; i < len(counts); i++ {
+    counts[i] += counts[i-1]
+  }
+  if debug { fmt.Println("Weights:", counts) }
+  sorted = make([]int, len(numbers))
+  for j := (len(numbers) - 1); j >= 0; j-- {
+    sorted[counts[numbers[j]]-1] = numbers[j]
+    counts[numbers[j]]--
+  }
+  return
+}
+
+// This function prints result
+func printResult(result []int) {
+  for _,val := range result {
+    fmt.Printf("%d ", val)
+  }
 }
 
 // This function handles errors
