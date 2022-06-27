@@ -14,7 +14,7 @@ func main() {
   if err != nil {
     printError(err)
   }
-  fmt.Println(nums)
+  fmt.Println(findLIS(nums))
 }
 
 //  This function reads input from os.Stdin
@@ -48,8 +48,17 @@ func readInputInt() (num []int, err error) {
 // This function for finding LIS
 func findLIS(nums []int)(n int) {
   d := make([]int, len(nums))
-  d[0] = 1
-  
+  n = 0
+  for i := range d {
+    d[i] = 1
+    for j := 0; j < i; j++ {
+      if (nums[j] <= nums[i]) && (nums[i]%nums[j] == 0) && (d[j] + 1 > d[i]) {
+        d[i] = d[j] + 1
+      }
+    }
+    if d[i] > n { n = d[i]}
+  }
+  return
 }
 
 // This function handles errors
