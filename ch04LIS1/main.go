@@ -10,7 +10,11 @@ import (
 )
 
 func main() {
-  
+  nums, err := readInputInt()
+  if err != nil {
+    printError(err)
+  }
+  fmt.Println(nums)
 }
 
 //  This function reads input from os.Stdin
@@ -20,6 +24,7 @@ func readInputInt() (num []int, err error) {
   if (err != nil) && (err != io.EOF) {
     return []int{}, err
   }
+  str = strings.TrimSpace(str)
   n, err := strconv.Atoi(str)
   if err != nil {
     return []int{}, err
@@ -28,6 +33,7 @@ func readInputInt() (num []int, err error) {
   if (err != nil) && (err != io.EOF) {
     return []int{}, err
   }
+  str = strings.TrimSpace(str)
   s := strings.Fields(str)
   num = make([]int, n)
   for i, _ := range num {
@@ -37,6 +43,13 @@ func readInputInt() (num []int, err error) {
     }
   }
   return
+}
+
+// This function for finding LIS
+func findLIS(nums []int)(n int) {
+  d := make([]int, len(nums))
+  d[0] = 1
+  
 }
 
 // This function handles errors
